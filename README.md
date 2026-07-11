@@ -24,4 +24,4 @@ npm run dev
 (또는 `KV_REST_API_URL`+`KV_REST_API_TOKEN`) 설정.
 
 - `/paradox/stats`: 프로젝터용 실시간 집계 현황판 (5초 자동 갱신)
-- `/paradox/api/reset?key=<RESET_KEY>`: 집계 초기화 (RESET_KEY 환경변수 필요)
+- `/paradox/api/reset?key=<관리키>`: 집계 초기화 (키의 SHA-256 지문을 코드에서 대조)
