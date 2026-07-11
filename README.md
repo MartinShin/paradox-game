@@ -20,4 +20,8 @@ npm run dev
 # http://localhost:3000/paradox
 ```
 
-집계 기능을 쓰려면 `.env.local`에 `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` 설정.
+집계 기능을 쓰려면 `.env.local`에 `UPSTASH_REDIS_REST_URL`+`UPSTASH_REDIS_REST_TOKEN`
+(또는 `KV_REST_API_URL`+`KV_REST_API_TOKEN`) 설정.
+
+- `/paradox/stats`: 프로젝터용 실시간 집계 현황판 (5초 자동 갱신)
+- `/paradox/api/reset?key=<RESET_KEY>`: 집계 초기화 (RESET_KEY 환경변수 필요)
