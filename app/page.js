@@ -320,14 +320,15 @@ export default function Page() {
               <p style={{ marginTop: 16 }}>
                 흰 공 칸을 가리면 <b>질문 ①과 질문 ②는 완전히 같은 문제</b>입니다.
                 흰 공 칸은 각 질문 안에서 두 선택지가 서로 같으므로 (①에서는 둘 다 10억,
-                ②에서는 둘 다 0원), 선택에 영향을 주지 않아야 합니다.
+                ②에서는 둘 다 0원), 선택에 영향을 주지 않아야 한다는 것이{' '}
+                <b>기대효용이론의 요구</b>입니다.
               </p>
             )}
           </div>
 
           {(allaisCombo === 'AD' || allaisCombo === 'BC') ? (
             <div className="verdict paradox">
-              <span className="headline">당신의 선택은 서로 모순입니다!</span>
+              <span className="headline">기대효용이론의 잣대로는 서로 모순인 선택입니다</span>
               {allaisCombo === 'AD' ? (
                 <>
                   질문 ①에서 A를 골랐다는 것은 &ldquo;확실한 10억이 (1% 꽝 + 10% 50억)보다
@@ -343,15 +344,18 @@ export default function Page() {
               )}
               <br />
               <br />
-              하지만 걱정 마세요. 전 세계에서 가장 흔한 선택이 바로 A+D입니다. 노벨경제학상
-              수상자 모리스 알레(Maurice Allais)가 1953년에 이 역설을 발표했고, 저명한
-              경제학자들조차 같은 선택을 했습니다.
+              다만 이것은 어디까지나 <b>기대효용이론이라는 특정한 잣대에서의 모순</b>일
+              뿐입니다. 넓은 의미의 합리성에서 당신이 틀렸다고 말할 수는 없습니다 - 전
+              세계에서 가장 흔한 선택이 바로 A+D이고, 노벨경제학상 수상자 모리스
+              알레(Maurice Allais)가 1953년에 이 역설을 발표했을 때 저명한 경제학자들조차
+              같은 선택을 했습니다. 아래 해설을 보세요.
             </div>
           ) : (
             <div className="verdict consistent">
-              <span className="headline">당신의 선택은 일관적입니다</span>
-              당신은 기대효용이론의 공리를 완벽히 따랐습니다. 실험에서 대부분의 사람들은
-              A+D를 골라 이론과 모순되는 선택을 합니다. 당신은 소수파입니다!
+              <span className="headline">기대효용이론과 일치하는 선택입니다</span>
+              당신의 선택은 기대효용이론의 공리를 그대로 따랐습니다. 실험에서 대부분의
+              사람들은 A+D를 골라 이 이론과 어긋나는 선택을 합니다. 당신은 소수파입니다!
+              (그렇다고 다수파가 비합리적이라는 뜻은 아닙니다 - 아래 해설을 보세요.)
             </div>
           )}
 
@@ -509,7 +513,7 @@ export default function Page() {
             <div className="verdict paradox">
               <span className="headline">
                 {ellsCombo === 'II_II'
-                  ? '당신의 선택은 확률로 설명할 수 없습니다!'
+                  ? '하나의 확률 믿음으로는 설명되지 않는 선택입니다'
                   : '흥미로운 선택입니다!'}
               </span>
               {ellsCombo === 'II_II' ? (
@@ -527,13 +531,18 @@ export default function Page() {
                   항아리에서 둘 다 50개를 넘을 수는 없습니다!
                 </>
               )}
+              <br />
+              <br />
+              다만 이것 역시 <b>하나의 확률 믿음을 요구하는 기대효용이론의 잣대에서 본
+              모순</b>일 뿐, 넓은 의미의 합리성에서 당신이 틀렸다는 뜻은 아닙니다 - 아래
+              &lsquo;모호성 회피&rsquo; 해설을 보세요.
             </div>
           ) : (
             <div className="verdict consistent">
-              <span className="headline">당신의 선택은 일관적입니다</span>
+              <span className="headline">기대효용이론과 양립하는 선택입니다</span>
               당신의 두 선택은 항아리 Ⅰ의 비율에 대한 하나의 일관된 믿음으로 설명될 수
               있습니다. 실험에서는 대부분의 사람들이 두 내기 모두 &ldquo;확실한&rdquo;
-              항아리 Ⅱ를 골라 모순에 빠집니다.
+              항아리 Ⅱ를 골라, 하나의 확률 믿음으로는 설명되지 않는 선택을 합니다.
             </div>
           )}
 
