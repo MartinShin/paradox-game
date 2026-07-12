@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StatsBars, ALLAIS_LABELS, ELLSBERG_LABELS } from './ui';
 
 const BASE = '/paradox';
@@ -140,6 +140,147 @@ function AllaisTable({ options, covered }) {
         ))}
       </tbody>
     </table>
+  );
+}
+
+/* ---------- 알레 시뮬레이션 (질문 ①) ---------- */
+
+function AllaisSim() {
+  const [choice, setChoice] = useState(null); // 'A' | 'B'
+  const [phase, setPhase] = useState('idle'); // 'idle' | 'drawing' | 'done'
+  const [ball, setBall] = useState('white');
+  const [reveal, setReveal] = useState(false);
+  const [triedB, setTriedB] = useState(false);
+  const ivRef = useRef(null);
+  const toRef = useRef(null);
+
+  useEffect(
+    () => () => {
+      clearInterval(ivRef.current);
+      clearTimeout(toRef.current);
+    },
+    []
+  );
+
+  function draw(c) {
+    if (phase === 'drawing') return;
+    clearInterval(ivRef.current);
+    clearTimeout(toRef.current);
+    setChoice(c);
+    setReveal(false);
+    setPhase('drawing');
+
+    const cycle = ['red', 'white', 'blue', 'white', 'blue', 'red', 'white', 'blue'];
+    let i = 0;
+    ivRef.current = setInterval(() => {
+      i += 1;
+      setBall(cycle[i % cycle.length]);
+    }, 85);
+
+    toRef.current = setTimeout(() => {
+      clearInterval(ivRef.current);
+      if (c === 'A') {
+        // 선택 A는 어떤 공이든 10억 - 공은 정직하게 무작위로 뽑는다.
+        const r = Math.random() * 100;
+        setBall(r < 1 ? 'red' : r < 11 ? 'blue' : 'white');
+      } else {
+        // 교육용 white lie: 선택 B는 언제나 빨간 공(=0원)이 나오도록 조작.
+        setBall('red');
+        setTriedB(true);
+      }
+      setPhase('done');
+    }, 1500);
+  }
+
+  const ballKo = { red: '빨간 공', white: '흰 공', blue: '파란 공' }[ball];
+
+  return (
+    <div className="sim-box">
+      <h3>🎲 직접 뽑아보기</h3>
+      <p className="sim-intro">
+        질문 ①의 두 복권을 직접 돌려봅시다. <b>선택 A</b>는 어떤 공이든 확실한 10억,{' '}
+        <b>선택 B</b>는 빨강이면 0원 · 흰색이면 10억 · 파랑이면 50억입니다. 어느 쪽으로
+        뽑아보시겠어요? (여러 번 해봐도 됩니다.)
+      </p>
+
+      <div className="sim-buttons">
+        <button
+          className="sim-pick"
+          onClick={() => draw('A')}
+          disabled={phase === 'drawing'}
+        >
+          선택 A로 뽑기
+          <small>확실한 10억</small>
+        </button>
+        <button
+          className="sim-pick"
+          onClick={() => draw('B')}
+          disabled={phase === 'drawing'}
+        >
+          선택 B로 뽑기
+          <small>1% 0원 · 89% 10억 · 10% 50억</small>
+        </button>
+      </div>
+
+      {phase !== 'idle' && (
+        <div className="sim-stage">
+          <div className={`draw-ball ${ball} ${phase === 'drawing' ? 'spin' : 'land'}`} />
+          {phase === 'drawing' ? (
+            <div className="sim-hint">항아리에서 공을 뽑는 중…</div>
+          ) : choice === 'A' ? (
+            <div className="sim-result">
+              {ballKo}이 나왔습니다.
+              <br />
+              <span className="win">선택 A는 어떤 공이 나와도 10억 원! ✅</span>
+            </div>
+          ) : (
+            <div className="sim-result">
+              {ballKo}이 나왔습니다.
+              <br />
+              <span className="lose">상금 0원 - 꽝입니다. 😱</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {triedB && phase === 'done' && !reveal && (
+        <div style={{ textAlign: 'center', marginTop: 16 }}>
+          <button className="reveal-btn" onClick={() => setReveal(true)}>
+            🎭 왜 자꾸 빨간 공만 나올까? 진실 보기
+          </button>
+        </div>
+      )}
+
+      {reveal && (
+        <div className="sim-reveal">
+          <h4>사실 이건 몰래 조작된 추첨이었습니다</h4>
+          <p>
+            솔직히 털어놓겠습니다. 선택 B로 뽑으면 <b>언제나</b> 빨간 공이 나오도록 몰래
+            정해 두었습니다. 원래대로라면 빨간 공이 나올 확률은 1%뿐인데도요. 방금의{' '}
+            &lsquo;꽝&rsquo;은 우연이 아니라 설계된 결과였습니다.
+          </p>
+          <p>
+            왜 이런 교육용 거짓말(white lie)을 했을까요? 사람들이 선택 A(확실한 10억)를
+            선호하는 진짜 이유를 몸으로 느끼게 하려는 것입니다.
+          </p>
+          <p>
+            기대값만 따지면 B가 A보다 낫습니다. 하지만 사람은 기대값만 보고 결정하지
+            않습니다. 현실에는 <b>확률표에 적히지 않은 리스크</b>가 숨어 있기 때문입니다 -
+            진행자가 거짓말을 할 수도, 추첨 기계가 고장 날 수도, 예상 못한 사고가 끼어들
+            수도 있습니다.
+          </p>
+          <p>
+            선택 A는 <b>어떤 공이 나와도</b> 10억이라 이런 조작·실수·사고에 전혀 흔들리지
+            않습니다. 반면 선택 B는 &lsquo;추첨이 공정하게 작동한다&rsquo;는 가정 위에
+            상금을 겁니다. 방금 느낀 배신감이 바로 그 <b>보이지 않는 리스크</b>입니다.
+          </p>
+          <p>
+            그러니 확실한 A를 택하는 것은 결코 비합리적이지 않습니다. 눈에 보이는 확률
+            너머의 불확실성까지 계산에 넣은, 오히려 신중한 선택일 수 있습니다.
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -378,6 +519,8 @@ export default function Page() {
               보여줍니다.
             </p>
           </div>
+
+          <AllaisSim />
 
           <button className="btn" onClick={() => go('e0')}>
             다음 실험으로 →
